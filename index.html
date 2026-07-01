@@ -1,0 +1,1040 @@
+<!-- v4: adjusted HEX size so the full code always fits + copy buttons -->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>加法混色・減法混色 実験室 v4</title>
+  <style>
+    :root {
+      --bg: #eef2f7;
+      --panel: rgba(255, 255, 255, 0.92);
+      --ink: #172033;
+      --muted: #667085;
+      --line: #d6dce8;
+      --shadow: 0 16px 40px rgba(31, 43, 68, 0.12);
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      min-height: 100%;
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 10% 10%, rgba(108, 140, 255, .18), transparent 28%),
+        radial-gradient(circle at 90% 90%, rgba(255, 112, 170, .14), transparent 26%),
+        var(--bg);
+      overflow-x: hidden;
+    }
+
+    body { padding: 18px; }
+
+    .app {
+      width: min(1400px, 100%);
+      height: calc(100vh - 36px);
+      min-height: 670px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-rows: auto auto 1fr;
+      gap: 12px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 12px 18px;
+      border: 1px solid rgba(255,255,255,.7);
+      background: rgba(255,255,255,.76);
+      backdrop-filter: blur(16px);
+      border-radius: 18px;
+      box-shadow: 0 8px 28px rgba(31,43,68,.08);
+    }
+
+    .title-wrap { display: flex; align-items: center; gap: 12px; min-width: 0; }
+    .logo {
+      width: 42px;
+      height: 42px;
+      border-radius: 13px;
+      display: grid;
+      place-items: center;
+      font-size: 24px;
+      background: linear-gradient(135deg, #fff, #e9eef8);
+      box-shadow: inset 0 0 0 1px rgba(23,32,51,.07);
+      flex: 0 0 auto;
+    }
+    h1 { margin: 0; font-size: clamp(20px, 2vw, 30px); letter-spacing: .02em; white-space: nowrap; }
+    .version-badge { display:inline-block; margin-left:6px; padding:3px 7px; border-radius:999px; background:#2b65f9; color:#fff; font-size:.45em; vertical-align:middle; letter-spacing:.04em; }
+    .subtitle { color: var(--muted); font-size: 13px; white-space: nowrap; }
+
+    .mode-summary {
+      font-weight: 800;
+      font-size: 14px;
+      padding: 8px 12px;
+      background: #172033;
+      color: #fff;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .tab {
+      border: 0;
+      border-radius: 16px;
+      padding: 12px 18px;
+      font: inherit;
+      font-weight: 900;
+      font-size: 16px;
+      cursor: pointer;
+      color: var(--ink);
+      background: rgba(255,255,255,.72);
+      box-shadow: inset 0 0 0 1px rgba(23,32,51,.08);
+      transition: .2s ease;
+    }
+    .tab:hover { transform: translateY(-1px); }
+    .tab.active {
+      color: #fff;
+      background: #172033;
+      box-shadow: 0 10px 22px rgba(23,32,51,.2);
+    }
+
+    .mode-panel {
+      min-height: 0;
+      display: none;
+      grid-template-columns: 390px minmax(0, 1fr);
+      gap: 14px;
+    }
+    .mode-panel.active { display: grid; }
+
+    .card {
+      min-height: 0;
+      background: var(--panel);
+      border: 1px solid rgba(255,255,255,.78);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .controls {
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .controls-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .controls h2 { margin: 0 0 3px; font-size: 22px; }
+    .controls-head p { margin: 0; color: var(--muted); font-size: 13px; }
+
+    .reset {
+      border: 0;
+      border-radius: 12px;
+      padding: 8px 11px;
+      font: inherit;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      background: #edf1f7;
+      color: #27314a;
+    }
+
+    .sliders { display: grid; gap: 12px; }
+
+    .slider-row {
+      --accent: #777;
+      display: grid;
+      grid-template-columns: 43px minmax(0, 1fr) 58px;
+      align-items: center;
+      gap: 10px;
+      padding: 12px;
+      background: #f8f9fc;
+      border: 1px solid #eaedf4;
+      border-radius: 16px;
+    }
+
+    .channel {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      font-weight: 1000;
+      color: #fff;
+      background: var(--accent);
+      box-shadow: 0 7px 16px color-mix(in srgb, var(--accent) 35%, transparent);
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+
+    output {
+      min-width: 54px;
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+      font-weight: 900;
+      padding: 7px 8px;
+      border-radius: 10px;
+      color: #1d263b;
+      background: #fff;
+      border: 1px solid #e0e5ee;
+    }
+
+    .readout {
+      display: grid;
+      grid-template-columns: 74px 1fr auto;
+      align-items: center;
+      gap: 10px;
+      padding: 13px 14px;
+      border-radius: 16px;
+      background: #172033;
+      color: #fff;
+    }
+    .readout .label { font-size: 12px; opacity: .72; font-weight: 800; }
+    .readout .value { font-size: 17px; font-weight: 900; font-variant-numeric: tabular-nums; }
+    .swatch { width: 34px; height: 34px; border-radius: 10px; border: 2px solid rgba(255,255,255,.6); }
+
+    .color-code-box {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 150px;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #ffffff, #f4f7ff);
+      border: 2px solid #b9c9f4;
+      box-shadow: 0 8px 20px rgba(31,43,68,.07);
+    }
+    .color-code-box > div {
+      min-width: 0;
+    }
+    .color-code-label {
+      display: block;
+      margin-bottom: 2px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: .08em;
+    }
+    .color-code-value {
+      display: block;
+      overflow: visible;
+      color: #172033;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 38px;
+      line-height: 1.05;
+      font-weight: 1000;
+      letter-spacing: 0;
+      white-space: nowrap;
+      text-overflow: clip;
+    }
+    .copy-code {
+      min-width: 104px;
+      border: 0;
+      border-radius: 13px;
+      padding: 11px 13px;
+      background: #172033;
+      color: #fff;
+      font: inherit;
+      font-size: 13px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 8px 18px rgba(23,32,51,.18);
+      transition: transform .16s ease, background .16s ease;
+    }
+    .copy-code:hover { transform: translateY(-1px); }
+    .copy-code:active { transform: translateY(0); }
+    .copy-code.copied { background: #16834a; }
+
+    .preset-title { font-size: 12px; font-weight: 900; color: var(--muted); letter-spacing: .08em; }
+    .presets { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .preset {
+      border: 1px solid #e2e6ef;
+      border-radius: 12px;
+      padding: 8px 4px;
+      background: #fff;
+      font: inherit;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .preset:hover { background: #f2f5fa; }
+
+    .mini-note {
+      margin-top: auto;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: #fff7cf;
+      color: #5d4b00;
+      font-size: 13px;
+      font-weight: 800;
+      border: 1px solid #f4e59a;
+    }
+
+    .stage {
+      position: relative;
+      min-height: 0;
+      isolation: isolate;
+    }
+
+    /* ---------- Additive stage ---------- */
+    .add-stage {
+      background:
+        radial-gradient(circle at center 70%, rgba(255,255,255,.05), transparent 31%),
+        linear-gradient(180deg, #0c111c, #151b29 74%, #0b0f18);
+    }
+
+    .add-caption {
+      position: absolute;
+      left: 20px;
+      top: 18px;
+      z-index: 5;
+      color: #fff;
+      font-weight: 900;
+      font-size: clamp(18px, 2vw, 28px);
+    }
+    .add-caption small { display: block; margin-top: 4px; color: #aeb8cb; font-size: 13px; font-weight: 700; }
+
+    .add-svg { width: 100%; height: 100%; display: block; }
+    .flashlight-shell { fill: #394255; stroke: rgba(255,255,255,.28); stroke-width: 2; }
+    .flashlight-grip { fill: #202838; }
+    .lamp-rim { fill: #c8cfdb; }
+    .lamp-core { stroke: rgba(255,255,255,.65); stroke-width: 2; }
+    .beam { mix-blend-mode: screen; filter: blur(1px); transition: opacity .08s linear; }
+    .beam-soft { mix-blend-mode: screen; filter: blur(18px); transition: opacity .08s linear; }
+    .pool { mix-blend-mode: screen; filter: blur(3px); transition: opacity .08s linear; }
+
+    .target-ring {
+      position: absolute;
+      left: 50%;
+      top: 65%;
+      transform: translate(-50%, -50%);
+      width: min(42vw, 440px);
+      aspect-ratio: 1;
+      border-radius: 50%;
+      pointer-events: none;
+      box-shadow:
+        0 0 0 2px rgba(255,255,255,.16),
+        inset 0 0 32px rgba(255,255,255,.15);
+      transition: background-color .08s linear, box-shadow .08s linear;
+    }
+
+    .mix-label {
+      position: absolute;
+      left: 50%;
+      top: 64%;
+      transform: translate(-50%, -50%);
+      z-index: 5;
+      text-align: center;
+      pointer-events: none;
+      color: #fff;
+      text-shadow: 0 2px 10px rgba(0,0,0,.72);
+    }
+    .mix-label strong { display: block; font-size: clamp(18px, 2.5vw, 34px); letter-spacing: .03em; }
+    .mix-label span { display: block; margin-top: 5px; font-size: 13px; font-weight: 800; opacity: .9; }
+    .mix-label .stage-hex {
+      margin-top: 8px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: clamp(38px, 5.2vw, 72px);
+      line-height: 1;
+      font-weight: 1000;
+      letter-spacing: .07em;
+      opacity: 1;
+    }
+
+    /* ---------- Subtractive stage ---------- */
+    .sub-stage {
+      background:
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,.95), rgba(249,247,241,.96) 55%, #e6dfd2 100%);
+    }
+
+    .sub-caption {
+      position: absolute;
+      left: 20px;
+      top: 18px;
+      z-index: 5;
+      font-weight: 900;
+      font-size: clamp(18px, 2vw, 28px);
+    }
+    .sub-caption small { display: block; margin-top: 4px; color: #6e6b65; font-size: 13px; font-weight: 700; }
+
+    #paintCanvas { width: 100%; height: 100%; display: block; }
+
+    .paint-result {
+      position: absolute;
+      left: 50%;
+      bottom: 22px;
+      transform: translateX(-50%);
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255,255,255,.8);
+      border: 1px solid rgba(90,76,55,.13);
+      backdrop-filter: blur(12px);
+      border-radius: 999px;
+      padding: 9px 14px;
+      box-shadow: 0 10px 26px rgba(92,73,44,.14);
+      font-weight: 900;
+      white-space: nowrap;
+    }
+    .paint-dot { width: 30px; height: 30px; border-radius: 50%; border: 2px solid rgba(30,30,30,.15); }
+
+    .tube-label {
+      position: absolute;
+      top: 20%;
+      font-size: 13px;
+      font-weight: 1000;
+      color: #394055;
+      z-index: 5;
+      background: rgba(255,255,255,.72);
+      padding: 6px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,.06);
+    }
+    .tube-c { left: 14%; }
+    .tube-m { left: 50%; transform: translateX(-50%); }
+    .tube-y { right: 14%; }
+
+    .mixing-indicator {
+      position: absolute;
+      right: 18px;
+      top: 18px;
+      z-index: 6;
+      opacity: 0;
+      transform: translateY(-5px);
+      transition: .2s ease;
+      border-radius: 999px;
+      padding: 7px 11px;
+      background: #172033;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 900;
+    }
+    .mixing-indicator.show { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 1000px) {
+      body { padding: 10px; }
+      .app { height: auto; min-height: 100vh; }
+      .mode-panel, .mode-panel.active { grid-template-columns: 1fr; }
+      .controls { min-height: 0; }
+      .stage { height: 620px; }
+      .subtitle, .mode-summary { display: none; }
+    }
+
+    @media (max-width: 1180px) {
+      .color-code-value { font-size: 32px; }
+      .color-code-box { grid-template-columns: minmax(0, 1fr) 138px; }
+    }
+
+    @media (max-width: 620px) {
+      h1 { font-size: 18px; white-space: normal; }
+      .topbar { padding: 10px 12px; }
+      .tabs { gap: 6px; }
+      .tab { padding: 11px 8px; font-size: 14px; }
+      .presets { grid-template-columns: repeat(2, 1fr); }
+      .color-code-box { grid-template-columns: minmax(0, 1fr) 126px; gap: 8px; }
+      .color-code-value { font-size: 28px; letter-spacing: 0; }
+      .copy-code { min-width: 0; padding-inline: 8px; font-size: 12px; }
+      .stage { height: 520px; }
+      .target-ring { width: 70vw; }
+      .tube-c { left: 6%; }
+      .tube-y { right: 6%; }
+    }
+  </style>
+<script type="text/javascript" nonce="27dcfb9564a3402a9e0cc61cf40" src="//local.adguard.org?ts=1782333078628&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000106472068de4754e8e19ac35%26ts%3D495094%26p%3Dfs%26cid%3D1%26sig%3D3d5d3f4bd3ae02a4ebb63d81140e5f6bf61092a306cf0036e03ae80aef8f6b2b%26v%3D0&amp;app=com.microsoft.edgemac&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1&amp;stealth=1&amp;st-push&amp;st-loc&amp;st-java&amp;st-dnt"></script><script type="text/javascript" nonce="27dcfb9564a3402a9e0cc61cf40" src="//local.adguard.org?ts=1782333078628&amp;name=AdGuard%20Extra&amp;type=user-script"></script></head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div class="title-wrap">
+        <div class="logo">🎨</div>
+        <div>
+          <h1>加法混色・減法混色 実験室 <span class="version-badge">v4</span></h1>
+          <div class="subtitle">スライダーを動かして、光と絵の具の違いを観察しよう</div>
+        </div>
+      </div>
+      <div class="mode-summary">光は足す ／ 絵の具は引く</div>
+    </header>
+
+    <nav class="tabs" aria-label="混色モード">
+      <button class="tab active" data-mode="add">🔦 加法混色（RGBライト）</button>
+      <button class="tab" data-mode="sub">🖌️ 減法混色（CMY絵の具）</button>
+    </nav>
+
+    <!-- 加法混色 -->
+    <section class="mode-panel active" id="addPanel">
+      <aside class="card controls">
+        <div class="controls-head">
+          <div>
+            <h2>RGBライト</h2>
+            <p>0〜255で光の強さを調整</p>
+          </div>
+          <button class="reset" id="resetRgb">リセット</button>
+        </div>
+
+        <div class="sliders">
+          <label class="slider-row" style="--accent:#ef3340">
+            <span class="channel">R</span>
+            <input id="r" type="range" min="0" max="255" value="255" />
+            <output id="rOut">255</output>
+          </label>
+          <label class="slider-row" style="--accent:#19b85a">
+            <span class="channel">G</span>
+            <input id="g" type="range" min="0" max="255" value="160" />
+            <output id="gOut">160</output>
+          </label>
+          <label class="slider-row" style="--accent:#367cff">
+            <span class="channel">B</span>
+            <input id="b" type="range" min="0" max="255" value="40" />
+            <output id="bOut">40</output>
+          </label>
+        </div>
+
+        <div class="readout">
+          <span class="label">照らされた色</span>
+          <span class="value" id="rgbText">(255, 160, 40)</span>
+          <span class="swatch" id="rgbSwatch"></span>
+        </div>
+
+        <div class="color-code-box">
+          <div>
+            <span class="color-code-label">16進数カラーコード</span>
+            <code class="color-code-value" id="rgbHexLarge">#FFA028</code>
+          </div>
+          <button class="copy-code" id="copyRgbHex" type="button">コードをコピー</button>
+        </div>
+
+        <div class="preset-title">すぐ試す</div>
+        <div class="presets" id="rgbPresets">
+          <button class="preset" data-v="0,0,0">消灯</button>
+          <button class="preset" data-v="255,0,0">赤</button>
+          <button class="preset" data-v="0,255,0">緑</button>
+          <button class="preset" data-v="0,0,255">青</button>
+          <button class="preset" data-v="255,255,0">黄</button>
+          <button class="preset" data-v="255,0,255">マゼンタ</button>
+          <button class="preset" data-v="0,255,255">シアン</button>
+          <button class="preset" data-v="255,255,255">白</button>
+        </div>
+
+        <div class="mini-note">💡 3色を強くするほど、中心は白に近づく</div>
+      </aside>
+
+      <div class="card stage add-stage">
+        <div class="add-caption">3本のライトを重ねる<small>光は重なるほど明るくなる</small></div>
+
+        <svg class="add-svg" viewBox="0 0 1000 650" preserveAspectRatio="xMidYMid meet" aria-label="赤・緑・青のライトが中央を照らす図">
+          <defs>
+            <linearGradient id="rBeam" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#ff3b47" stop-opacity=".95"/>
+              <stop offset="1" stop-color="#ff3b47" stop-opacity="0"/>
+            </linearGradient>
+            <linearGradient id="gBeam" x1=".5" y1="0" x2=".5" y2="1">
+              <stop offset="0" stop-color="#20f06c" stop-opacity=".95"/>
+              <stop offset="1" stop-color="#20f06c" stop-opacity="0"/>
+            </linearGradient>
+            <linearGradient id="bBeam" x1="1" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#3984ff" stop-opacity=".95"/>
+              <stop offset="1" stop-color="#3984ff" stop-opacity="0"/>
+            </linearGradient>
+            <filter id="glowR"><feGaussianBlur stdDeviation="14"/></filter>
+            <filter id="glowG"><feGaussianBlur stdDeviation="14"/></filter>
+            <filter id="glowB"><feGaussianBlur stdDeviation="14"/></filter>
+          </defs>
+
+          <!-- beams -->
+          <path id="beamRSoft" class="beam-soft" d="M155,165 L470,520 L620,440 Z" fill="url(#rBeam)"/>
+          <path id="beamR" class="beam" d="M168,176 L474,510 L600,445 Z" fill="url(#rBeam)"/>
+          <ellipse id="poolR" class="pool" cx="454" cy="460" rx="205" ry="160" fill="#ff2537" opacity=".7"/>
+
+          <path id="beamGSoft" class="beam-soft" d="M500,116 L410,490 L590,490 Z" fill="url(#gBeam)"/>
+          <path id="beamG" class="beam" d="M500,128 L426,476 L574,476 Z" fill="url(#gBeam)"/>
+          <ellipse id="poolG" class="pool" cx="520" cy="450" rx="205" ry="160" fill="#16e866" opacity=".7"/>
+
+          <path id="beamBSoft" class="beam-soft" d="M845,165 L400,440 L550,520 Z" fill="url(#bBeam)"/>
+          <path id="beamB" class="beam" d="M832,176 L420,445 L546,510 Z" fill="url(#bBeam)"/>
+          <ellipse id="poolB" class="pool" cx="550" cy="462" rx="205" ry="160" fill="#337fff" opacity=".7"/>
+
+          <!-- flashlights -->
+          <g transform="translate(130 115) rotate(-28)">
+            <rect class="flashlight-shell" x="0" y="0" width="118" height="56" rx="18"/>
+            <rect class="flashlight-grip" x="38" y="44" width="44" height="60" rx="10"/>
+            <rect class="lamp-rim" x="104" y="7" width="28" height="42" rx="8"/>
+            <ellipse id="lampR" class="lamp-core" cx="130" cy="28" rx="12" ry="20" fill="#ff2a39"/>
+            <text x="20" y="36" fill="#fff" font-size="22" font-weight="900">R</text>
+          </g>
+
+          <g transform="translate(441 48)">
+            <rect class="flashlight-shell" x="0" y="0" width="118" height="56" rx="18"/>
+            <rect class="flashlight-grip" x="38" y="44" width="44" height="60" rx="10"/>
+            <rect class="lamp-rim" x="104" y="7" width="28" height="42" rx="8"/>
+            <ellipse id="lampG" class="lamp-core" cx="130" cy="28" rx="12" ry="20" fill="#18e85f"/>
+            <text x="20" y="36" fill="#fff" font-size="22" font-weight="900">G</text>
+          </g>
+
+          <g transform="translate(752 115) rotate(28)">
+            <rect class="flashlight-shell" x="0" y="0" width="118" height="56" rx="18"/>
+            <rect class="flashlight-grip" x="38" y="44" width="44" height="60" rx="10"/>
+            <rect class="lamp-rim" x="104" y="7" width="28" height="42" rx="8"/>
+            <ellipse id="lampB" class="lamp-core" cx="130" cy="28" rx="12" ry="20" fill="#347fff"/>
+            <text x="20" y="36" fill="#fff" font-size="22" font-weight="900">B</text>
+          </g>
+        </svg>
+
+        <div class="target-ring" id="targetRing"></div>
+        <div class="mix-label">
+          <strong id="mixName">オレンジ</strong>
+          <span class="stage-hex" id="hexText">#FFA028</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 減法混色 -->
+    <section class="mode-panel" id="subPanel">
+      <aside class="card controls">
+        <div class="controls-head">
+          <div>
+            <h2>CMY絵の具</h2>
+            <p>0〜255で絵の具の量を調整</p>
+          </div>
+          <button class="reset" id="resetCmy">リセット</button>
+        </div>
+
+        <div class="sliders">
+          <label class="slider-row" style="--accent:#03bcd4">
+            <span class="channel">C</span>
+            <input id="c" type="range" min="0" max="255" value="40" />
+            <output id="cOut">40</output>
+          </label>
+          <label class="slider-row" style="--accent:#e8329a">
+            <span class="channel">M</span>
+            <input id="m" type="range" min="0" max="255" value="150" />
+            <output id="mOut">150</output>
+          </label>
+          <label class="slider-row" style="--accent:#e9be00">
+            <span class="channel">Y</span>
+            <input id="y" type="range" min="0" max="255" value="220" />
+            <output id="yOut">220</output>
+          </label>
+        </div>
+
+        <div class="readout">
+          <span class="label">混ざった色</span>
+          <span class="value" id="cmyText">C40 M150 Y220</span>
+          <span class="swatch" id="cmySwatch"></span>
+        </div>
+
+        <div class="color-code-box">
+          <div>
+            <span class="color-code-label">16進数カラーコード</span>
+            <code class="color-code-value" id="cmyHexLarge">#A45A32</code>
+          </div>
+          <button class="copy-code" id="copyCmyHex" type="button">コードをコピー</button>
+        </div>
+
+        <div class="preset-title">すぐ試す</div>
+        <div class="presets" id="cmyPresets">
+          <button class="preset" data-v="0,0,0">絵の具なし</button>
+          <button class="preset" data-v="255,0,0">シアン</button>
+          <button class="preset" data-v="0,255,0">マゼンタ</button>
+          <button class="preset" data-v="0,0,255">イエロー</button>
+          <button class="preset" data-v="255,255,0">青</button>
+          <button class="preset" data-v="0,255,255">赤</button>
+          <button class="preset" data-v="255,0,255">緑</button>
+          <button class="preset" data-v="255,255,255">黒に近い色</button>
+        </div>
+
+        <div class="mini-note">🖌️ 絵の具を増やすほど光を吸収し、黒に近づく</div>
+      </aside>
+
+      <div class="card stage sub-stage">
+        <div class="sub-caption">絵の具をまぜまぜ<small>重なるほど反射する光が減る</small></div>
+        <div class="mixing-indicator" id="mixingIndicator">ぐるぐる混色中</div>
+        <div class="tube-label tube-c">C シアン</div>
+        <div class="tube-label tube-m">M マゼンタ</div>
+        <div class="tube-label tube-y">Y イエロー</div>
+        <canvas id="paintCanvas"></canvas>
+        <div class="paint-result">
+          <span class="paint-dot" id="paintDot"></span>
+          <span id="paintName">茶・オレンジ系</span>
+          <span id="paintHex">#A45A32</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+
+    // ---------------- tabs ----------------
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t === tab));
+        const mode = tab.dataset.mode;
+        $('addPanel').classList.toggle('active', mode === 'add');
+        $('subPanel').classList.toggle('active', mode === 'sub');
+        if (mode === 'sub') resizeCanvas();
+      });
+    });
+
+    // ---------------- utility ----------------
+    const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
+    const toHex = (n) => clamp(Math.round(n), 0, 255).toString(16).padStart(2, '0').toUpperCase();
+    const rgbHex = (r,g,b) => `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+
+    async function copyCode(sourceId, buttonId) {
+      const text = $(sourceId).textContent.trim();
+      const button = $(buttonId);
+      let copied = false;
+
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(text);
+          copied = true;
+        }
+      } catch (_) {}
+
+      if (!copied) {
+        const area = document.createElement('textarea');
+        area.value = text;
+        area.setAttribute('readonly', '');
+        area.style.position = 'fixed';
+        area.style.opacity = '0';
+        area.style.pointerEvents = 'none';
+        document.body.appendChild(area);
+        area.select();
+        area.setSelectionRange(0, area.value.length);
+        try { copied = document.execCommand('copy'); } catch (_) {}
+        area.remove();
+      }
+
+      const original = 'コードをコピー';
+      button.textContent = copied ? 'コピー済み ✓' : '選択してコピー';
+      button.classList.toggle('copied', copied);
+      clearTimeout(button._copyTimer);
+      button._copyTimer = setTimeout(() => {
+        button.textContent = original;
+        button.classList.remove('copied');
+      }, 1300);
+    }
+
+    function colorName(r,g,b) {
+      const max = Math.max(r,g,b), min = Math.min(r,g,b);
+      const light = (max + min) / 2;
+      if (max < 22) return '黒';
+      if (min > 235) return '白';
+      if (max - min < 18) return light > 175 ? '明るい灰色' : light > 85 ? '灰色' : '暗い灰色';
+      let h;
+      const d = max - min;
+      if (max === r) h = ((g - b) / d) % 6;
+      else if (max === g) h = (b - r) / d + 2;
+      else h = (r - g) / d + 4;
+      h = (h * 60 + 360) % 360;
+      if (h < 15 || h >= 345) return '赤';
+      if (h < 43) return 'オレンジ';
+      if (h < 70) return '黄';
+      if (h < 165) return '緑';
+      if (h < 200) return 'シアン';
+      if (h < 255) return '青';
+      if (h < 290) return '紫';
+      if (h < 345) return 'マゼンタ';
+      return '混色';
+    }
+
+    // ---------------- additive mixing ----------------
+    const rgbInputs = [$('r'), $('g'), $('b')];
+    let rgb = [255,160,40];
+
+    function updateRgb() {
+      rgb = rgbInputs.map(x => Number(x.value));
+      const [r,g,b] = rgb;
+      $('rOut').value = r; $('gOut').value = g; $('bOut').value = b;
+      $('rgbText').textContent = `(${r}, ${g}, ${b})`;
+      const hex = rgbHex(r,g,b);
+      $('rgbSwatch').style.background = `rgb(${r},${g},${b})`;
+      $('hexText').textContent = hex;
+      $('rgbHexLarge').textContent = hex;
+      $('mixName').textContent = colorName(r,g,b);
+
+      const brightness = (r + g + b) / (255 * 3);
+      $('targetRing').style.background = `rgb(${r},${g},${b})`;
+      $('targetRing').style.boxShadow = `0 0 0 2px rgba(255,255,255,.16), 0 0 ${35 + brightness*90}px rgba(${r},${g},${b},${.18 + brightness*.55}), inset 0 0 34px rgba(255,255,255,${.06 + brightness*.25})`;
+
+      const vals = {R:r, G:g, B:b};
+      for (const key of ['R','G','B']) {
+        const v = vals[key] / 255;
+        $(`beam${key}`).style.opacity = String(.06 + v * .74);
+        $(`beam${key}Soft`).style.opacity = String(v * .55);
+        $(`pool${key}`).style.opacity = String(v * .56);
+        $(`lamp${key}`).style.opacity = String(.22 + v * .78);
+        $(`lamp${key}`).style.filter = `drop-shadow(0 0 ${4 + v*22}px ${key==='R'?'#ff3042':key==='G'?'#21ed68':'#3b85ff'})`;
+      }
+    }
+
+    rgbInputs.forEach(input => input.addEventListener('input', updateRgb));
+    $('rgbPresets').addEventListener('click', e => {
+      const btn = e.target.closest('[data-v]');
+      if (!btn) return;
+      const vals = btn.dataset.v.split(',').map(Number);
+      rgbInputs.forEach((input, i) => input.value = vals[i]);
+      updateRgb();
+    });
+    $('resetRgb').addEventListener('click', () => {
+      [255,160,40].forEach((v,i) => rgbInputs[i].value = v);
+      updateRgb();
+    });
+    $('copyRgbHex').addEventListener('click', () => copyCode('rgbHexLarge', 'copyRgbHex'));
+
+    // ---------------- subtractive mixing ----------------
+    const cmyInputs = [$('c'), $('m'), $('y')];
+    const canvas = $('paintCanvas');
+    const ctx = canvas.getContext('2d');
+    let cmy = [40,150,220];
+    let mixKick = 0;
+    let lastTime = performance.now();
+    let animT = 0;
+
+    function cmyToRgb(c,m,y) {
+      const C = c/255, M = m/255, Y = y/255;
+      // A simple pigment-like reflectance model. Multiple pigments multiply absorption.
+      let r = 255 * (1 - .92*C) * (1 - .08*M) * (1 - .08*Y);
+      let g = 255 * (1 - .08*C) * (1 - .92*M) * (1 - .08*Y);
+      let b = 255 * (1 - .08*C) * (1 - .08*M) * (1 - .92*Y);
+      const balance = Math.min(C,M,Y);
+      const load = (C+M+Y)/3;
+      const mud = clamp((load-.48)/.52, 0, 1) * balance;
+      const factor = 1 - .42 * mud;
+      return [r*factor, g*factor, b*factor].map(Math.round);
+    }
+
+    function updateCmy(kick=true) {
+      cmy = cmyInputs.map(x => Number(x.value));
+      const [c,m,y] = cmy;
+      $('cOut').value = c; $('mOut').value = m; $('yOut').value = y;
+      $('cmyText').textContent = `C${c}  M${m}  Y${y}`;
+      const [r,g,b] = cmyToRgb(c,m,y);
+      const hex = rgbHex(r,g,b);
+      $('cmySwatch').style.background = `rgb(${r},${g},${b})`;
+      $('paintDot').style.background = `rgb(${r},${g},${b})`;
+      $('paintHex').textContent = hex;
+      $('cmyHexLarge').textContent = hex;
+      $('paintName').textContent = colorName(r,g,b) + '系';
+      if (kick) {
+        mixKick = 1;
+        $('mixingIndicator').classList.add('show');
+        clearTimeout(updateCmy.hideTimer);
+        updateCmy.hideTimer = setTimeout(() => $('mixingIndicator').classList.remove('show'), 650);
+      }
+    }
+
+    cmyInputs.forEach(input => input.addEventListener('input', () => updateCmy(true)));
+    $('cmyPresets').addEventListener('click', e => {
+      const btn = e.target.closest('[data-v]');
+      if (!btn) return;
+      const vals = btn.dataset.v.split(',').map(Number);
+      cmyInputs.forEach((input, i) => input.value = vals[i]);
+      updateCmy(true);
+    });
+    $('resetCmy').addEventListener('click', () => {
+      [40,150,220].forEach((v,i) => cmyInputs[i].value = v);
+      updateCmy(true);
+    });
+    $('copyCmyHex').addEventListener('click', () => copyCode('cmyHexLarge', 'copyCmyHex'));
+
+    function resizeCanvas() {
+      const rect = canvas.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.max(1, Math.round(rect.width * dpr));
+      canvas.height = Math.max(1, Math.round(rect.height * dpr));
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+    }
+    window.addEventListener('resize', resizeCanvas);
+
+    function blobPath(cx,cy,baseR,t,phase,waves=11) {
+      ctx.beginPath();
+      for (let i=0; i<=120; i++) {
+        const a = Math.PI*2*i/120;
+        const wobble = Math.sin(a*waves + t*1.7 + phase)*.035 + Math.sin(a*5 - t*1.1 + phase*1.7)*.022;
+        const rr = baseR * (1 + wobble);
+        const x = cx + Math.cos(a)*rr*1.18;
+        const y = cy + Math.sin(a)*rr*.82;
+        if (i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+      }
+      ctx.closePath();
+    }
+
+    function drawTube(x,y,color,amount,label) {
+      const width = 58, height = 110;
+      ctx.save();
+      ctx.translate(x,y);
+      ctx.rotate((x < canvas.clientWidth/2 ? .16 : x > canvas.clientWidth/2 ? -.16 : 0));
+      ctx.fillStyle = 'rgba(255,255,255,.96)';
+      ctx.strokeStyle = 'rgba(33,39,52,.22)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.roundRect(-width/2,-height/2,width,height,14);
+      ctx.fill(); ctx.stroke();
+      ctx.fillStyle = color;
+      ctx.globalAlpha = .22 + .78*amount;
+      ctx.beginPath();
+      ctx.roundRect(-width/2+7,-height/2+26,width-14,height-40,10);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = '#20283a';
+      ctx.font = '900 22px system-ui, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(label,0,0);
+      ctx.fillStyle = '#b8bdc8';
+      ctx.fillRect(-18,height/2-3,36,15);
+      ctx.restore();
+    }
+
+    function drawPaint(now) {
+      const dt = Math.min((now-lastTime)/1000, .05);
+      lastTime = now;
+      animT += dt;
+      mixKick = Math.max(0, mixKick - dt*1.8);
+
+      const w = canvas.clientWidth, h = canvas.clientHeight;
+      if (!w || !h) { requestAnimationFrame(drawPaint); return; }
+      ctx.clearRect(0,0,w,h);
+
+      const [c,m,y] = cmy.map(v=>v/255);
+      const [rr,gg,bb] = cmyToRgb(...cmy);
+      const cx = w*.5, cy = h*.58;
+      const baseR = Math.min(w,h)*.235;
+      const swirl = mixKick;
+
+      // subtle desk shadow
+      ctx.save();
+      ctx.filter = 'blur(20px)';
+      ctx.fillStyle = 'rgba(74,53,33,.15)';
+      ctx.beginPath();
+      ctx.ellipse(cx,cy+baseR*.5,baseR*1.25,baseR*.65,0,0,Math.PI*2);
+      ctx.fill();
+      ctx.restore();
+
+      // paint tubes
+      drawTube(w*.18,h*.26,'#05bdd6',c,'C');
+      drawTube(w*.50,h*.20,'#e9369b',m,'M');
+      drawTube(w*.82,h*.26,'#f0c600',y,'Y');
+
+      // drips from tubes toward puddle
+      const drips = [
+        {x:w*.25, col:'rgba(0,192,214,.78)', a:c, phase:0},
+        {x:w*.50, col:'rgba(232,45,151,.78)', a:m, phase:2.1},
+        {x:w*.75, col:'rgba(242,199,0,.82)', a:y, phase:4.2}
+      ];
+      drips.forEach(d => {
+        if (d.a < .02) return;
+        ctx.save();
+        ctx.strokeStyle = d.col;
+        ctx.lineWidth = 5 + d.a*8;
+        ctx.lineCap = 'round';
+        ctx.globalAlpha = .18 + d.a*.65;
+        ctx.beginPath();
+        ctx.moveTo(d.x,h*.36);
+        ctx.bezierCurveTo(d.x + Math.sin(animT*1.5+d.phase)*16,h*.42, cx + (d.x-cx)*.35, cy-baseR*.65, cx + (d.x-cx)*.18, cy-baseR*.45);
+        ctx.stroke();
+        ctx.restore();
+      });
+
+      // Main puddle
+      ctx.save();
+      blobPath(cx,cy,baseR,animT*.55,0);
+      const grad = ctx.createRadialGradient(cx-baseR*.25,cy-baseR*.3,baseR*.08,cx,cy,baseR*1.35);
+      grad.addColorStop(0, `rgba(${clamp(rr+45,0,255)},${clamp(gg+45,0,255)},${clamp(bb+45,0,255)},1)`);
+      grad.addColorStop(.55, `rgb(${rr},${gg},${bb})`);
+      grad.addColorStop(1, `rgb(${Math.round(rr*.68)},${Math.round(gg*.68)},${Math.round(bb*.68)})`);
+      ctx.fillStyle = grad;
+      ctx.fill();
+      ctx.strokeStyle = `rgba(${Math.round(rr*.45)},${Math.round(gg*.45)},${Math.round(bb*.45)},.5)`;
+      ctx.lineWidth = 3;
+      ctx.stroke();
+      ctx.restore();
+
+      // Colored lobes before fully mixed
+      ctx.save();
+      ctx.globalCompositeOperation = 'multiply';
+      const lobes = [
+        {a:c, col:'rgba(0,199,224,.78)', off:-1.9},
+        {a:m, col:'rgba(234,43,150,.75)', off:-.1},
+        {a:y, col:'rgba(247,204,0,.78)', off:1.7}
+      ];
+      lobes.forEach((l,i) => {
+        if (l.a < .01) return;
+        const angle = l.off + animT*(.10 + swirl*.55)*(i%2?1:-1);
+        const rad = baseR*(.27 + swirl*.12);
+        const lx = cx + Math.cos(angle)*rad;
+        const ly = cy + Math.sin(angle)*rad*.55;
+        ctx.filter = `blur(${12 + (1-swirl)*11}px)`;
+        ctx.globalAlpha = l.a * (.42 + swirl*.30);
+        ctx.fillStyle = l.col;
+        ctx.beginPath();
+        ctx.ellipse(lx,ly,baseR*(.46+.08*l.a),baseR*(.30+.06*l.a),angle*.3,0,Math.PI*2);
+        ctx.fill();
+      });
+      ctx.restore();
+
+      // Spiral strokes / stirring effect
+      ctx.save();
+      ctx.translate(cx,cy);
+      ctx.rotate(animT*(.18 + swirl*2.5));
+      ctx.lineCap = 'round';
+      for (let ring=0; ring<4; ring++) {
+        ctx.beginPath();
+        const start = ring*.7;
+        for (let i=0;i<80;i++) {
+          const a = start + i*.095;
+          const rad = baseR*(.10 + i/80*.72);
+          const x = Math.cos(a)*rad*1.12;
+          const yy = Math.sin(a)*rad*.70;
+          if (i===0) ctx.moveTo(x,yy); else ctx.lineTo(x,yy);
+        }
+        ctx.strokeStyle = `rgba(255,255,255,${.08 + swirl*.16})`;
+        ctx.lineWidth = 3 + swirl*4;
+        ctx.stroke();
+      }
+      ctx.restore();
+
+      // stirring stick
+      ctx.save();
+      ctx.translate(cx+baseR*.52,cy-baseR*.58);
+      ctx.rotate(-.64 + Math.sin(animT*5)*.03*swirl);
+      ctx.fillStyle = '#caa16d';
+      ctx.strokeStyle = '#9d774a';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.roundRect(-9,-baseR*.95,18,baseR*1.18,8);
+      ctx.fill(); ctx.stroke();
+      ctx.restore();
+
+      requestAnimationFrame(drawPaint);
+    }
+
+    resizeCanvas();
+    updateRgb();
+    updateCmy(false);
+    requestAnimationFrame(drawPaint);
+  </script>
+</body>
+</html>
