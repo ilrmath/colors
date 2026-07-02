@@ -1,10 +1,10 @@
-<!-- v6: detailed Japanese color naming + copy color name / HEX / RGB -->
+<!-- v7: detailed Japanese color naming + interactive electromagnetic spectrum page -->
 <!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>加法混色・減法混色 実験室 v6</title>
+  <title>光と色 実験室 v7</title>
   <style>
     :root {
       --bg: #eef2f7;
@@ -84,7 +84,7 @@
 
     .tabs {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(3, 1fr);
       gap: 10px;
     }
 
@@ -453,12 +453,397 @@
     }
     .mixing-indicator.show { opacity: 1; transform: translateY(0); }
 
+
+
+    /* ---------- Electromagnetic spectrum ---------- */
+    .spectrum-panel {
+      grid-template-columns: 360px minmax(0, 1fr);
+    }
+
+    .spectrum-controls {
+      overflow-y: auto;
+    }
+
+    .spectrum-slider-row {
+      grid-template-columns: 43px minmax(0, 1fr) 78px;
+    }
+
+    .spectrum-slider-row output {
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .spectrum-readouts {
+      display: grid;
+      gap: 8px;
+    }
+
+    .spectrum-readout {
+      display: grid;
+      grid-template-columns: 72px minmax(0, 1fr);
+      align-items: center;
+      gap: 10px;
+      min-height: 46px;
+      padding: 9px 12px;
+      border-radius: 14px;
+      background: #f7f9fc;
+      border: 1px solid #e5e9f2;
+    }
+
+    .spectrum-readout span {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: .06em;
+    }
+
+    .spectrum-readout strong {
+      min-width: 0;
+      font-size: 15px;
+      line-height: 1.25;
+      overflow-wrap: anywhere;
+    }
+
+    .spectrum-kind {
+      font-size: 22px !important;
+    }
+
+    .formula-box {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 13px;
+      border-radius: 14px;
+      background: #172033;
+      color: #fff;
+    }
+
+    .formula-box strong {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 18px;
+      letter-spacing: .03em;
+    }
+
+    .formula-box span {
+      color: #cdd5e5;
+      font-size: 11px;
+      font-weight: 800;
+      text-align: right;
+    }
+
+    .spectrum-presets {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .spectrum-stage {
+      position: relative;
+      padding: 78px 20px 20px;
+      background:
+        radial-gradient(circle at 90% 12%, rgba(116, 98, 255, .13), transparent 26%),
+        radial-gradient(circle at 10% 92%, rgba(0, 174, 239, .11), transparent 28%),
+        linear-gradient(180deg, #fbfcff, #eef2f8);
+      overflow: auto;
+    }
+
+    .spectrum-caption {
+      position: absolute;
+      left: 20px;
+      top: 18px;
+      z-index: 5;
+      font-weight: 900;
+      font-size: clamp(18px, 2vw, 28px);
+    }
+
+    .spectrum-caption small {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .spectrum-layout {
+      min-width: 760px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .spectrum-card {
+      background: rgba(255,255,255,.9);
+      border: 1px solid rgba(103,116,143,.17);
+      border-radius: 18px;
+      box-shadow: 0 10px 26px rgba(31,43,68,.08);
+    }
+
+    .spectrum-overview {
+      padding: 18px 18px 14px;
+    }
+
+    .axis-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 6px;
+      color: #4b5871;
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .axis-title-row.bottom {
+      margin: 7px 0 0;
+    }
+
+    .spectrum-axis {
+      position: relative;
+      height: 28px;
+      margin: 0 4px;
+    }
+
+    .spectrum-tick {
+      position: absolute;
+      top: 0;
+      transform: translateX(-50%);
+      color: #47536a;
+      font-size: 10px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .spectrum-tick::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 15px;
+      width: 1px;
+      height: 10px;
+      background: #aeb7c8;
+    }
+
+    .spectrum-tick.edge-left { transform: none; }
+    .spectrum-tick.edge-left::after { left: 0; }
+    .spectrum-tick.edge-right { transform: translateX(-100%); }
+    .spectrum-tick.edge-right::after { left: 100%; }
+
+    .em-track {
+      position: relative;
+      height: 118px;
+      margin: 0 4px;
+      border-radius: 14px;
+      overflow: visible;
+      background: #dfe4ec;
+      border: 1px solid #cbd3df;
+      box-shadow: inset 0 2px 8px rgba(33,44,68,.12);
+    }
+
+    .em-band {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      border: 0;
+      border-right: 1px solid rgba(255,255,255,.48);
+      padding: 0;
+      cursor: pointer;
+      color: #fff;
+      font: inherit;
+      overflow: hidden;
+      transition: filter .16s ease, transform .16s ease, z-index .16s ease;
+    }
+
+    .em-band:first-child { border-radius: 13px 0 0 13px; }
+    .em-band:last-of-type { border-radius: 0 13px 13px 0; }
+    .em-band:hover { filter: brightness(1.12); z-index: 2; }
+    .em-band.active {
+      z-index: 3;
+      filter: brightness(1.18) saturate(1.12);
+      box-shadow: inset 0 0 0 3px rgba(255,255,255,.72);
+    }
+
+    .em-band span {
+      position: absolute;
+      left: 50%;
+      bottom: 10px;
+      transform: translateX(-50%);
+      max-width: calc(100% - 8px);
+      font-size: 11px;
+      font-weight: 1000;
+      line-height: 1.15;
+      text-align: center;
+      white-space: nowrap;
+      text-shadow: 0 1px 4px rgba(0,0,0,.55);
+    }
+
+    .em-band.narrow span { display: none; }
+
+    .em-marker {
+      position: absolute;
+      z-index: 8;
+      top: -12px;
+      bottom: -12px;
+      width: 3px;
+      border-radius: 999px;
+      background: #111827;
+      transform: translateX(-50%);
+      pointer-events: none;
+      box-shadow: 0 0 0 2px rgba(255,255,255,.78), 0 5px 12px rgba(17,24,39,.3);
+      transition: left .08s linear;
+    }
+
+    .em-marker::before {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: -2px;
+      width: 12px;
+      height: 12px;
+      transform: translate(-50%, -50%) rotate(45deg);
+      border-radius: 2px;
+      background: #111827;
+    }
+
+    .em-marker-label {
+      position: absolute;
+      left: 50%;
+      top: -35px;
+      transform: translateX(-50%);
+      padding: 6px 9px;
+      border-radius: 9px;
+      background: #111827;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 900;
+      white-space: nowrap;
+      box-shadow: 0 7px 18px rgba(17,24,39,.24);
+    }
+
+    .frequency-axis .spectrum-tick::after {
+      top: -10px;
+    }
+
+    .wave-card {
+      display: grid;
+      grid-template-columns: 150px minmax(0, 1fr);
+      align-items: center;
+      min-height: 124px;
+      padding: 14px 18px;
+      overflow: hidden;
+    }
+
+    .wave-text strong {
+      display: block;
+      font-size: 16px;
+    }
+
+    .wave-text span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .wave-svg {
+      width: 100%;
+      height: 94px;
+      display: block;
+      overflow: visible;
+    }
+
+    .wave-path {
+      fill: none;
+      stroke: #3478f6;
+      stroke-width: 5;
+      stroke-linecap: round;
+      filter: drop-shadow(0 5px 7px rgba(52,120,246,.2));
+      transition: stroke .16s ease;
+    }
+
+    .visible-card {
+      padding: 14px 18px 16px;
+    }
+
+    .visible-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 9px;
+    }
+
+    .visible-head strong { font-size: 16px; }
+    .visible-head span {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .visible-spectrum {
+      position: relative;
+      height: 72px;
+      border-radius: 13px;
+      background: linear-gradient(90deg,
+        #4b197d 0%, #4f2f91 8%, #263fa3 18%, #146bc1 30%,
+        #00a2c8 38%, #18a85d 49%, #9ccf2e 58%, #f0e51e 68%,
+        #ffb915 76%, #f36a17 86%, #df1d24 94%, #a70916 100%);
+      border: 1px solid rgba(31,43,68,.18);
+      box-shadow: inset 0 0 16px rgba(255,255,255,.22);
+    }
+
+    .visible-marker {
+      position: absolute;
+      top: -6px;
+      bottom: -6px;
+      width: 4px;
+      transform: translateX(-50%);
+      border-radius: 999px;
+      background: #fff;
+      box-shadow: 0 0 0 2px #111827, 0 5px 12px rgba(0,0,0,.28);
+      transition: left .08s linear, opacity .16s ease;
+    }
+
+    .visible-marker.outside { opacity: .18; }
+
+    .visible-labels {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      margin-top: 5px;
+      color: #4b5568;
+      font-size: 10px;
+      font-weight: 900;
+      text-align: center;
+    }
+
+    .visible-range-wrap {
+      display: grid;
+      grid-template-columns: 70px minmax(0, 1fr) 72px;
+      align-items: center;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .visible-range-wrap span,
+    .visible-range-wrap output {
+      font-size: 11px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .spectrum-footnote {
+      margin: 0 4px;
+      color: #697489;
+      font-size: 10px;
+      font-weight: 700;
+    }
+
     @media (max-width: 1000px) {
       body { padding: 10px; }
       .app { height: auto; min-height: 100vh; }
       .mode-panel, .mode-panel.active { grid-template-columns: 1fr; }
+      .spectrum-panel, .spectrum-panel.active { grid-template-columns: 1fr; }
       .controls { min-height: 0; }
       .stage { height: 620px; }
+      .spectrum-stage { height: auto; min-height: 650px; }
       .subtitle, .mode-summary { display: none; }
     }
 
@@ -471,7 +856,9 @@
       h1 { font-size: 18px; white-space: normal; }
       .topbar { padding: 10px 12px; }
       .tabs { gap: 6px; }
-      .tab { padding: 11px 8px; font-size: 14px; }
+      .tab { padding: 11px 6px; font-size: 12px; }
+      .spectrum-presets { grid-template-columns: repeat(3, 1fr); }
+      .spectrum-stage { padding-inline: 10px; }
       .presets { grid-template-columns: repeat(2, 1fr); }
       .color-code-box { grid-template-columns: 1fr; gap: 8px; }
       .color-code-value { font-size: 24px; letter-spacing: 0; }
@@ -483,23 +870,24 @@
       .tube-y { right: 6%; }
     }
   </style>
-<script type="text/javascript" nonce="61a5bb5718eb439e81fc2bec2a2" src="//local.adguard.org?ts=1782992471413&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000004dc072078335388b723e0b90%26fn%3D%25E5%258A%25A0%25E6%25B3%2595%25E6%25B7%25B7%25E8%2589%25B2%25E3%2581%25A8%25E6%25B8%259B%25E6%25B3%2595%25E6%25B7%25B7%25E8%2589%25B2_v6.html%26cd%3Dattachment%26ts%3D495276%26p%3Dfs%26cid%3D1%26sig%3D27e6541cb345cde2e340718acbd222993156da7744e43ab19c4bfd9a93faade4%26v%3D0&amp;app=com.microsoft.edgemac&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1&amp;stealth=1&amp;st-push&amp;st-loc&amp;st-java&amp;st-dnt"></script><script type="text/javascript" nonce="61a5bb5718eb439e81fc2bec2a2" src="//local.adguard.org?ts=1782992471413&amp;name=AdGuard%20Extra&amp;type=user-script"></script></head>
+<script type="text/javascript" nonce="61a5bb5718eb439e81fc2bec2a2" src="//local.adguard.org?ts=1782996056827&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000ab447207944172f1eafb97be%26fn%3D%25E5%258A%25A0%25E6%25B3%2595%25E6%25B7%25B7%25E8%2589%25B2%25E3%2581%25A8%25E6%25B8%259B%25E6%25B3%2595%25E6%25B7%25B7%25E8%2589%25B2_v7.html%26cd%3Dattachment%26ts%3D495277%26p%3Dfs%26cid%3D1%26sig%3D80cabfcee904f1092c712178cb544eae1c4d5076c4135a447e8e4b362d0974ad%26v%3D0&amp;app=com.microsoft.edgemac&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1&amp;stealth=1&amp;st-push&amp;st-loc&amp;st-java&amp;st-dnt"></script><script type="text/javascript" nonce="61a5bb5718eb439e81fc2bec2a2" src="//local.adguard.org?ts=1782996056827&amp;name=AdGuard%20Extra&amp;type=user-script"></script></head>
 <body>
   <main class="app">
     <header class="topbar">
       <div class="title-wrap">
         <div class="logo">🎨</div>
         <div>
-          <h1>加法混色・減法混色 実験室 <span class="version-badge">v6</span></h1>
-          <div class="subtitle">スライダーを動かして、光と絵の具の違いを観察しよう</div>
+          <h1>光と色 実験室 <span class="version-badge">v7</span></h1>
+          <div class="subtitle">混色と電磁波を、動かして観察しよう</div>
         </div>
       </div>
-      <div class="mode-summary">光は足す ／ 絵の具は引く</div>
+      <div class="mode-summary">混色 ／ 電磁波</div>
     </header>
 
     <nav class="tabs" aria-label="混色モード">
       <button class="tab active" data-mode="add">🔦 加法混色｜ディスプレイ</button>
       <button class="tab" data-mode="sub">🖌️ 減法混色｜インク</button>
+      <button class="tab" data-mode="spectrum">🌈 電磁波スペクトル</button>
     </nav>
 
     <!-- 加法混色 -->
@@ -721,6 +1109,114 @@
         </div>
       </div>
     </section>
+
+
+    <!-- 電磁波スペクトル -->
+    <section class="mode-panel spectrum-panel" id="spectrumPanel">
+      <aside class="card controls spectrum-controls">
+        <div class="controls-head">
+          <div>
+            <h2>電磁波</h2>
+            <p>波長を動かして観察</p>
+          </div>
+          <button class="reset" id="resetSpectrum">可視光へ</button>
+        </div>
+
+        <label class="slider-row spectrum-slider-row" style="--accent:#6c63ff">
+          <span class="channel">λ</span>
+          <input id="spectrumRange" type="range" min="-14" max="7" step="0.01" value="-6.2596" />
+          <output id="spectrumShort">550 nm</output>
+        </label>
+
+        <div class="spectrum-readouts">
+          <div class="spectrum-readout">
+            <span>種類</span>
+            <strong class="spectrum-kind" id="spectrumKind">可視光線</strong>
+          </div>
+          <div class="spectrum-readout">
+            <span>波長</span>
+            <strong id="wavelengthText">550 nm</strong>
+          </div>
+          <div class="spectrum-readout">
+            <span>周波数</span>
+            <strong id="frequencyText">545 THz</strong>
+          </div>
+          <div class="spectrum-readout">
+            <span>利用例</span>
+            <strong id="spectrumUse">照明・視覚</strong>
+          </div>
+        </div>
+
+        <div class="formula-box">
+          <strong>f = c ÷ λ</strong>
+          <span>c = 3.0×10⁸ m/s</span>
+        </div>
+
+        <div class="preset-title">すぐ移動</div>
+        <div class="presets spectrum-presets" id="spectrumPresets">
+          <button class="preset" data-log="-12">γ線</button>
+          <button class="preset" data-log="-9.5">X線</button>
+          <button class="preset" data-log="-7">紫外線</button>
+          <button class="preset" data-log="-6.2596">可視光</button>
+          <button class="preset" data-log="-4.5">赤外線</button>
+          <button class="preset" data-log="-1.5">マイクロ波</button>
+          <button class="preset" data-log="0.7">FM</button>
+          <button class="preset" data-log="2.6">AM</button>
+          <button class="preset" data-log="6.75">電力</button>
+        </div>
+
+        <div class="mini-note">↔ 波長が長いほど、周波数は低い</div>
+      </aside>
+
+      <div class="card stage spectrum-stage">
+        <div class="spectrum-caption">電磁波のスペクトル<small>対数目盛で全体を表示</small></div>
+
+        <div class="spectrum-layout">
+          <section class="spectrum-card spectrum-overview" aria-label="電磁波スペクトルの全体図">
+            <div class="axis-title-row"><span>波長 λ（m）</span><span>短い → 長い</span></div>
+            <div class="spectrum-axis" id="wavelengthAxis"></div>
+            <div class="em-track" id="emTrack">
+              <div class="em-marker" id="emMarker"><span class="em-marker-label" id="emMarkerLabel">可視光線</span></div>
+            </div>
+            <div class="spectrum-axis frequency-axis" id="frequencyAxis"></div>
+            <div class="axis-title-row bottom"><span>周波数 f（Hz）</span><span>高い → 低い</span></div>
+          </section>
+
+          <section class="spectrum-card wave-card">
+            <div class="wave-text">
+              <strong>波のイメージ</strong>
+              <span id="waveHint">短い波長ほど細かい</span>
+            </div>
+            <svg class="wave-svg" viewBox="0 0 760 100" preserveAspectRatio="none" aria-label="選択した電磁波の波形イメージ">
+              <line x1="0" y1="50" x2="760" y2="50" stroke="#d4dae5" stroke-width="2" />
+              <path class="wave-path" id="wavePath" d="" />
+            </svg>
+          </section>
+
+          <section class="spectrum-card visible-card">
+            <div class="visible-head">
+              <strong>可視光線を拡大</strong>
+              <span id="visibleColorName">緑</span>
+            </div>
+            <div class="visible-spectrum">
+              <div class="visible-marker" id="visibleMarker"></div>
+            </div>
+            <div class="visible-labels">
+              <span>紫</span><span>青紫</span><span>青</span><span>青緑</span>
+              <span>緑</span><span>黄</span><span>橙</span><span>赤</span>
+            </div>
+            <label class="visible-range-wrap">
+              <span>380 nm</span>
+              <input id="visibleRange" type="range" min="380" max="780" step="1" value="550" />
+              <output id="visibleOutput">550 nm</output>
+            </label>
+          </section>
+
+          <p class="spectrum-footnote">※境界はおおよその値です。宇宙線は主に高エネルギー粒子で、電磁波とは別です。</p>
+        </div>
+      </div>
+    </section>
+
   </main>
 
   <script>
@@ -733,7 +1229,9 @@
         const mode = tab.dataset.mode;
         $('addPanel').classList.toggle('active', mode === 'add');
         $('subPanel').classList.toggle('active', mode === 'sub');
+        $('spectrumPanel').classList.toggle('active', mode === 'spectrum');
         if (mode === 'sub') resizeCanvas();
+        if (mode === 'spectrum') requestAnimationFrame(updateSpectrum);
       });
     });
 
@@ -1368,7 +1866,228 @@
       requestAnimationFrame(drawPaint);
     }
 
+
+
+    // ---------------- electromagnetic spectrum ----------------
+    const LIGHT_SPEED = 299792458;
+    const SPECTRUM_MIN_LOG = -14;
+    const SPECTRUM_MAX_LOG = 7;
+
+    const spectrumBands = [
+      {name:'γ線', short:'γ線', start:-14, end:-11, use:'材料検査・放射線治療', color:'linear-gradient(180deg,#5b2c83,#2f1747)'},
+      {name:'X線', short:'X線', start:-11, end:-8, use:'レントゲン撮影', color:'linear-gradient(180deg,#68718f,#3b425b)'},
+      {name:'紫外線', short:'紫外線', start:-8, end:Math.log10(380e-9), use:'殺菌・蛍光', color:'linear-gradient(180deg,#7d3fc1,#442070)'},
+      {name:'可視光線', short:'', start:Math.log10(380e-9), end:Math.log10(780e-9), use:'照明・視覚', color:'linear-gradient(90deg,#58207e,#2445a5,#08a4c6,#21aa58,#e7df22,#f39218,#d71920)'},
+      {name:'赤外線', short:'赤外線', start:Math.log10(780e-9), end:-3, use:'リモコン・熱画像', color:'linear-gradient(180deg,#e74b34,#8e241b)'},
+      {name:'マイクロ波', short:'マイクロ波', start:-3, end:0, use:'電子レンジ・レーダー', color:'linear-gradient(180deg,#11a5b7,#086270)'},
+      {name:'超短波', short:'超短波', start:0, end:1, use:'FM・テレビ', color:'linear-gradient(180deg,#2d8aca,#17537c)'},
+      {name:'短波', short:'短波', start:1, end:2, use:'海外向けラジオ', color:'linear-gradient(180deg,#3478b8,#214c75)'},
+      {name:'中波', short:'中波', start:2, end:3, use:'AMラジオ', color:'linear-gradient(180deg,#4e75ad,#2b456d)'},
+      {name:'長波', short:'長波', start:3, end:4, use:'航空・船舶通信', color:'linear-gradient(180deg,#596a9f,#333f66)'},
+      {name:'超長波', short:'超長波', start:4, end:7, use:'電力・長距離通信', color:'linear-gradient(180deg,#646b86,#343847)'}
+    ];
+
+    function spectrumPercent(logValue) {
+      return (logValue - SPECTRUM_MIN_LOG) / (SPECTRUM_MAX_LOG - SPECTRUM_MIN_LOG) * 100;
+    }
+
+    function superscriptNumber(value) {
+      const map = {'-':'⁻','0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+      return String(value).split('').map(ch => map[ch] || ch).join('');
+    }
+
+    function scientificText(value, digits=2) {
+      if (!Number.isFinite(value) || value === 0) return '0';
+      const exp = Math.floor(Math.log10(Math.abs(value)));
+      const mantissa = value / Math.pow(10, exp);
+      return `${mantissa.toFixed(digits).replace(/\.0+$|(?<=\.[0-9])0+$/,'')}×10${superscriptNumber(exp)}`;
+    }
+
+    function compactNumber(value, unit) {
+      const abs = Math.abs(value);
+      let digits = abs >= 100 ? 0 : abs >= 10 ? 1 : 2;
+      return `${value.toFixed(digits).replace(/\.0+$|(?<=\.[0-9])0+$/,'')} ${unit}`;
+    }
+
+    function formatWavelength(meters, includeScientific=false) {
+      let display;
+      if (meters < 1e-12) display = compactNumber(meters / 1e-15, 'fm');
+      else if (meters < 1e-9) display = compactNumber(meters / 1e-12, 'pm');
+      else if (meters < 1e-6) display = compactNumber(meters / 1e-9, 'nm');
+      else if (meters < 1e-3) display = compactNumber(meters / 1e-6, 'µm');
+      else if (meters < 1e-2) display = compactNumber(meters / 1e-3, 'mm');
+      else if (meters < 1) display = compactNumber(meters / 1e-2, 'cm');
+      else if (meters < 1e3) display = compactNumber(meters, 'm');
+      else display = compactNumber(meters / 1e3, 'km');
+      return includeScientific ? `${display}（${scientificText(meters)} m）` : display;
+    }
+
+    function formatFrequency(hz, includeScientific=false) {
+      let display;
+      if (hz >= 1e18) display = compactNumber(hz / 1e18, 'EHz');
+      else if (hz >= 1e15) display = compactNumber(hz / 1e15, 'PHz');
+      else if (hz >= 1e12) display = compactNumber(hz / 1e12, 'THz');
+      else if (hz >= 1e9) display = compactNumber(hz / 1e9, 'GHz');
+      else if (hz >= 1e6) display = compactNumber(hz / 1e6, 'MHz');
+      else if (hz >= 1e3) display = compactNumber(hz / 1e3, 'kHz');
+      else display = compactNumber(hz, 'Hz');
+      return includeScientific ? `${display}（${scientificText(hz)} Hz）` : display;
+    }
+
+    function getSpectrumBand(logValue) {
+      return spectrumBands.find((band, index) => logValue >= band.start && (logValue < band.end || index === spectrumBands.length - 1)) || spectrumBands[0];
+    }
+
+    function visibleColorName(nm) {
+      if (nm < 410) return '紫';
+      if (nm < 450) return '青紫';
+      if (nm < 495) return '青';
+      if (nm < 510) return '青緑';
+      if (nm < 570) return '緑';
+      if (nm < 590) return '黄';
+      if (nm < 620) return '橙';
+      if (nm < 700) return '赤';
+      return '深赤';
+    }
+
+    function wavelengthToCss(nm) {
+      let r=0, g=0, b=0;
+      if (nm >= 380 && nm < 440) { r = -(nm-440)/(440-380); b = 1; }
+      else if (nm < 490) { g = (nm-440)/(490-440); b = 1; }
+      else if (nm < 510) { g = 1; b = -(nm-510)/(510-490); }
+      else if (nm < 580) { r = (nm-510)/(580-510); g = 1; }
+      else if (nm < 645) { r = 1; g = -(nm-645)/(645-580); }
+      else if (nm <= 780) { r = 1; }
+      let factor = 1;
+      if (nm < 420) factor = .3 + .7*(nm-380)/(420-380);
+      else if (nm > 700) factor = .3 + .7*(780-nm)/(780-700);
+      const gamma = .8;
+      const conv = v => Math.round(255 * Math.pow(Math.max(0, v*factor), gamma));
+      return `rgb(${conv(r)},${conv(g)},${conv(b)})`;
+    }
+
+    function drawSpectrumWave(logValue, color) {
+      const normalized = (logValue - SPECTRUM_MIN_LOG) / (SPECTRUM_MAX_LOG - SPECTRUM_MIN_LOG);
+      const cycles = 19 - normalized * 16.5;
+      const points = [];
+      const width = 760;
+      const height = 100;
+      const samples = 220;
+      for (let i=0; i<=samples; i++) {
+        const x = width * i / samples;
+        const y = height/2 + Math.sin((i/samples) * Math.PI * 2 * cycles) * 31;
+        points.push(`${i===0?'M':'L'}${x.toFixed(1)},${y.toFixed(1)}`);
+      }
+      $('wavePath').setAttribute('d', points.join(' '));
+      $('wavePath').style.stroke = color;
+      $('waveHint').textContent = normalized < .34 ? '短い波長：細かい波' : normalized > .68 ? '長い波長：ゆるい波' : '波長と周波数は反比例';
+    }
+
+    function initSpectrum() {
+      const wavelengthAxis = $('wavelengthAxis');
+      const frequencyAxis = $('frequencyAxis');
+      const track = $('emTrack');
+      if (!wavelengthAxis || wavelengthAxis.dataset.ready) return;
+      wavelengthAxis.dataset.ready = '1';
+
+      const tickLogs = [-14,-12,-10,-8,-6,-4,-2,0,2,4,6,7];
+      tickLogs.forEach((logValue, index) => {
+        const left = spectrumPercent(logValue);
+        const waveTick = document.createElement('span');
+        waveTick.className = 'spectrum-tick' + (index===0?' edge-left':index===tickLogs.length-1?' edge-right':'');
+        waveTick.style.left = `${left}%`;
+        waveTick.textContent = `10${superscriptNumber(logValue)}`;
+        wavelengthAxis.appendChild(waveTick);
+
+        const freqTick = document.createElement('span');
+        freqTick.className = 'spectrum-tick' + (index===0?' edge-left':index===tickLogs.length-1?' edge-right':'');
+        freqTick.style.left = `${left}%`;
+        const freq = LIGHT_SPEED / Math.pow(10, logValue);
+        freqTick.textContent = scientificText(freq, 0);
+        frequencyAxis.appendChild(freqTick);
+      });
+
+      spectrumBands.forEach((band) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'em-band';
+        button.dataset.name = band.name;
+        button.style.left = `${spectrumPercent(band.start)}%`;
+        button.style.width = `${spectrumPercent(band.end)-spectrumPercent(band.start)}%`;
+        button.style.background = band.color;
+        if (band.end-band.start < .7) button.classList.add('narrow');
+        button.innerHTML = `<span>${band.short}</span>`;
+        button.title = `${band.name}：${band.use}`;
+        button.addEventListener('click', () => {
+          $('spectrumRange').value = String((band.start+band.end)/2);
+          updateSpectrum();
+        });
+        track.insertBefore(button, $('emMarker'));
+      });
+    }
+
+    function updateSpectrum() {
+      initSpectrum();
+      const logValue = Number($('spectrumRange').value);
+      const meters = Math.pow(10, logValue);
+      const frequency = LIGHT_SPEED / meters;
+      const band = getSpectrumBand(logValue);
+      const pct = clamp(spectrumPercent(logValue), 0, 100);
+
+      $('spectrumShort').value = formatWavelength(meters);
+      $('spectrumKind').textContent = band.name;
+      $('wavelengthText').textContent = formatWavelength(meters, true);
+      $('frequencyText').textContent = formatFrequency(frequency, true);
+      $('spectrumUse').textContent = band.use;
+      $('emMarker').style.left = `${pct}%`;
+      $('emMarkerLabel').textContent = band.name;
+
+      document.querySelectorAll('.em-band').forEach(el => el.classList.toggle('active', el.dataset.name === band.name));
+
+      const visibleNm = meters * 1e9;
+      const inVisible = visibleNm >= 380 && visibleNm <= 780;
+      const nmForMarker = clamp(visibleNm, 380, 780);
+      const visiblePct = (nmForMarker-380)/(780-380)*100;
+      $('visibleMarker').style.left = `${visiblePct}%`;
+      $('visibleMarker').classList.toggle('outside', !inVisible);
+      if (inVisible) {
+        $('visibleRange').value = String(Math.round(visibleNm));
+        $('visibleOutput').value = `${Math.round(visibleNm)} nm`;
+        $('visibleColorName').textContent = visibleColorName(visibleNm);
+      } else {
+        $('visibleColorName').textContent = '可視光外';
+      }
+
+      const waveColor = inVisible ? wavelengthToCss(visibleNm) : ({
+        'γ線':'#5d2e8c','X線':'#5e6783','紫外線':'#7a43c3','赤外線':'#e14b37',
+        'マイクロ波':'#0d9bad','超短波':'#2b86c5','短波':'#3474ad','中波':'#4b6fa4','長波':'#596891','超長波':'#666b82'
+      }[band.name] || '#3478f6');
+      drawSpectrumWave(logValue, waveColor);
+    }
+
+    $('spectrumRange').addEventListener('input', updateSpectrum);
+    $('visibleRange').addEventListener('input', () => {
+      const nm = Number($('visibleRange').value);
+      $('spectrumRange').value = String(Math.log10(nm * 1e-9));
+      $('visibleOutput').value = `${nm} nm`;
+      updateSpectrum();
+    });
+    $('resetSpectrum').addEventListener('click', () => {
+      $('spectrumRange').value = '-6.2596';
+      $('visibleRange').value = '550';
+      updateSpectrum();
+    });
+    $('spectrumPresets').addEventListener('click', e => {
+      const button = e.target.closest('[data-log]');
+      if (!button) return;
+      $('spectrumRange').value = button.dataset.log;
+      updateSpectrum();
+    });
+
+
     resizeCanvas();
+    initSpectrum();
+    updateSpectrum();
     updateRgb();
     updateCmy(false);
     requestAnimationFrame(drawPaint);
