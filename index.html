@@ -1,10 +1,10 @@
-<!-- v4: adjusted HEX size so the full code always fits + copy buttons -->
+<!-- v6: detailed Japanese color naming + copy color name / HEX / RGB -->
 <!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>加法混色・減法混色 実験室 v4</title>
+  <title>加法混色・減法混色 実験室 v6</title>
   <style>
     :root {
       --bg: #eef2f7;
@@ -213,21 +213,30 @@
 
     .color-code-box {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) 150px;
+      grid-template-columns: minmax(0, 1fr) 116px;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       padding: 12px 14px;
       border-radius: 16px;
       background: linear-gradient(135deg, #ffffff, #f4f7ff);
       border: 2px solid #b9c9f4;
       box-shadow: 0 8px 20px rgba(31,43,68,.07);
     }
-    .color-code-box > div {
+    .color-code-values {
       min-width: 0;
+      display: grid;
+      gap: 6px;
+    }
+    .color-code-item {
+      min-width: 0;
+      display: grid;
+      grid-template-columns: 50px minmax(0, 1fr);
+      align-items: baseline;
+      gap: 6px;
     }
     .color-code-label {
       display: block;
-      margin-bottom: 2px;
+      margin-bottom: 0;
       color: var(--muted);
       font-size: 11px;
       font-weight: 900;
@@ -238,15 +247,26 @@
       overflow: visible;
       color: #172033;
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-      font-size: 38px;
+      font-size: 24px;
       line-height: 1.05;
       font-weight: 1000;
       letter-spacing: 0;
       white-space: nowrap;
       text-overflow: clip;
     }
+    .color-code-value.rgb-decimal { font-size: 15px; padding-bottom: 1px; }
+    .color-name-value {
+      min-width: 0;
+      color: #172033;
+      font-size: 17px;
+      line-height: 1.15;
+      font-weight: 1000;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
     .copy-code {
-      min-width: 104px;
+      min-width: 116px;
       border: 0;
       border-radius: 13px;
       padding: 11px 13px;
@@ -443,8 +463,8 @@
     }
 
     @media (max-width: 1180px) {
-      .color-code-value { font-size: 32px; }
-      .color-code-box { grid-template-columns: minmax(0, 1fr) 138px; }
+      .color-code-value { font-size: 22px; }
+      .color-code-box { grid-template-columns: minmax(0, 1fr) 108px; }
     }
 
     @media (max-width: 620px) {
@@ -453,23 +473,24 @@
       .tabs { gap: 6px; }
       .tab { padding: 11px 8px; font-size: 14px; }
       .presets { grid-template-columns: repeat(2, 1fr); }
-      .color-code-box { grid-template-columns: minmax(0, 1fr) 126px; gap: 8px; }
-      .color-code-value { font-size: 28px; letter-spacing: 0; }
-      .copy-code { min-width: 0; padding-inline: 8px; font-size: 12px; }
+      .color-code-box { grid-template-columns: 1fr; gap: 8px; }
+      .color-code-value { font-size: 24px; letter-spacing: 0; }
+      .color-code-value.rgb-decimal { font-size: 15px; }
+      .copy-code { width: 100%; min-width: 0; padding-inline: 8px; font-size: 12px; }
       .stage { height: 520px; }
       .target-ring { width: 70vw; }
       .tube-c { left: 6%; }
       .tube-y { right: 6%; }
     }
   </style>
-<script type="text/javascript" nonce="27dcfb9564a3402a9e0cc61cf40" src="//local.adguard.org?ts=1782333078628&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000106472068de4754e8e19ac35%26ts%3D495094%26p%3Dfs%26cid%3D1%26sig%3D3d5d3f4bd3ae02a4ebb63d81140e5f6bf61092a306cf0036e03ae80aef8f6b2b%26v%3D0&amp;app=com.microsoft.edgemac&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1&amp;stealth=1&amp;st-push&amp;st-loc&amp;st-java&amp;st-dnt"></script><script type="text/javascript" nonce="27dcfb9564a3402a9e0cc61cf40" src="//local.adguard.org?ts=1782333078628&amp;name=AdGuard%20Extra&amp;type=user-script"></script></head>
+<script type="text/javascript" nonce="61a5bb5718eb439e81fc2bec2a2" src="//local.adguard.org?ts=1782992471413&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000004dc072078335388b723e0b90%26fn%3D%25E5%258A%25A0%25E6%25B3%2595%25E6%25B7%25B7%25E8%2589%25B2%25E3%2581%25A8%25E6%25B8%259B%25E6%25B3%2595%25E6%25B7%25B7%25E8%2589%25B2_v6.html%26cd%3Dattachment%26ts%3D495276%26p%3Dfs%26cid%3D1%26sig%3D27e6541cb345cde2e340718acbd222993156da7744e43ab19c4bfd9a93faade4%26v%3D0&amp;app=com.microsoft.edgemac&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1&amp;stealth=1&amp;st-push&amp;st-loc&amp;st-java&amp;st-dnt"></script><script type="text/javascript" nonce="61a5bb5718eb439e81fc2bec2a2" src="//local.adguard.org?ts=1782992471413&amp;name=AdGuard%20Extra&amp;type=user-script"></script></head>
 <body>
   <main class="app">
     <header class="topbar">
       <div class="title-wrap">
         <div class="logo">🎨</div>
         <div>
-          <h1>加法混色・減法混色 実験室 <span class="version-badge">v4</span></h1>
+          <h1>加法混色・減法混色 実験室 <span class="version-badge">v6</span></h1>
           <div class="subtitle">スライダーを動かして、光と絵の具の違いを観察しよう</div>
         </div>
       </div>
@@ -477,8 +498,8 @@
     </header>
 
     <nav class="tabs" aria-label="混色モード">
-      <button class="tab active" data-mode="add">🔦 加法混色（RGBライト）</button>
-      <button class="tab" data-mode="sub">🖌️ 減法混色（CMY絵の具）</button>
+      <button class="tab active" data-mode="add">🔦 加法混色｜ディスプレイ</button>
+      <button class="tab" data-mode="sub">🖌️ 減法混色｜インク</button>
     </nav>
 
     <!-- 加法混色 -->
@@ -517,11 +538,21 @@
         </div>
 
         <div class="color-code-box">
-          <div>
-            <span class="color-code-label">16進数カラーコード</span>
-            <code class="color-code-value" id="rgbHexLarge">#FFA028</code>
+          <div class="color-code-values">
+            <div class="color-code-item">
+              <span class="color-code-label">近似色名</span>
+              <strong class="color-name-value" id="rgbColorName">萱草</strong>
+            </div>
+            <div class="color-code-item">
+              <span class="color-code-label">16進</span>
+              <code class="color-code-value" id="rgbHexLarge">#FFA028</code>
+            </div>
+            <div class="color-code-item">
+              <span class="color-code-label">10進</span>
+              <code class="color-code-value rgb-decimal" id="rgbDecimalLarge">(255,160,40)</code>
+            </div>
           </div>
-          <button class="copy-code" id="copyRgbHex" type="button">コードをコピー</button>
+          <button class="copy-code" id="copyRgbHex" type="button">色名＋コード</button>
         </div>
 
         <div class="preset-title">すぐ試す</div>
@@ -602,7 +633,7 @@
 
         <div class="target-ring" id="targetRing"></div>
         <div class="mix-label">
-          <strong id="mixName">オレンジ</strong>
+          <strong id="mixName">萱草</strong>
           <span class="stage-hex" id="hexText">#FFA028</span>
         </div>
       </div>
@@ -644,11 +675,21 @@
         </div>
 
         <div class="color-code-box">
-          <div>
-            <span class="color-code-label">16進数カラーコード</span>
-            <code class="color-code-value" id="cmyHexLarge">#A45A32</code>
+          <div class="color-code-values">
+            <div class="color-code-item">
+              <span class="color-code-label">近似色名</span>
+              <strong class="color-name-value" id="cmyColorName">樺</strong>
+            </div>
+            <div class="color-code-item">
+              <span class="color-code-label">16進</span>
+              <code class="color-code-value" id="cmyHexLarge">#C06B31</code>
+            </div>
+            <div class="color-code-item">
+              <span class="color-code-label">10進</span>
+              <code class="color-code-value rgb-decimal" id="cmyDecimalLarge">(192,107,49)</code>
+            </div>
           </div>
-          <button class="copy-code" id="copyCmyHex" type="button">コードをコピー</button>
+          <button class="copy-code" id="copyCmyHex" type="button">色名＋コード</button>
         </div>
 
         <div class="preset-title">すぐ試す</div>
@@ -675,7 +716,7 @@
         <canvas id="paintCanvas"></canvas>
         <div class="paint-result">
           <span class="paint-dot" id="paintDot"></span>
-          <span id="paintName">茶・オレンジ系</span>
+          <span id="paintName">樺</span>
           <span id="paintHex">#A45A32</span>
         </div>
       </div>
@@ -701,8 +742,11 @@
     const toHex = (n) => clamp(Math.round(n), 0, 255).toString(16).padStart(2, '0').toUpperCase();
     const rgbHex = (r,g,b) => `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 
-    async function copyCode(sourceId, buttonId) {
-      const text = $(sourceId).textContent.trim();
+    async function copyColorInfo(nameId, hexId, decimalId, buttonId) {
+      const name = $(nameId).textContent.trim();
+      const hex = $(hexId).textContent.trim();
+      const decimal = $(decimalId).textContent.trim();
+      const text = `${name} / ${hex} / ${decimal}`;
       const button = $(buttonId);
       let copied = false;
 
@@ -727,7 +771,8 @@
         area.remove();
       }
 
-      const original = 'コードをコピー';
+      const original = button.dataset.original || button.textContent;
+      button.dataset.original = original;
       button.textContent = copied ? 'コピー済み ✓' : '選択してコピー';
       button.classList.toggle('copied', copied);
       clearTimeout(button._copyTimer);
@@ -737,27 +782,313 @@
       }, 1300);
     }
 
-    function colorName(r,g,b) {
-      const max = Math.max(r,g,b), min = Math.min(r,g,b);
-      const light = (max + min) / 2;
-      if (max < 22) return '黒';
-      if (min > 235) return '白';
-      if (max - min < 18) return light > 175 ? '明るい灰色' : light > 85 ? '灰色' : '暗い灰色';
-      let h;
-      const d = max - min;
-      if (max === r) h = ((g - b) / d) % 6;
-      else if (max === g) h = (b - r) / d + 2;
-      else h = (r - g) / d + 4;
-      h = (h * 60 + 360) % 360;
-      if (h < 15 || h >= 345) return '赤';
-      if (h < 43) return 'オレンジ';
-      if (h < 70) return '黄';
-      if (h < 165) return '緑';
-      if (h < 200) return 'シアン';
-      if (h < 255) return '青';
-      if (h < 290) return '紫';
-      if (h < 345) return 'マゼンタ';
-      return '混色';
+    // 250 Japanese traditional colors, plus exact RGB primaries.
+    // The nearest name is selected in the perceptually uniform OKLab space.
+    const COLOR_NAME_SOURCE = [
+      ['黒', '#000000'],
+      ['白', '#FFFFFF'],
+      ['赤', '#FF0000'],
+      ['緑', '#00FF00'],
+      ['青', '#0000FF'],
+      ['黄', '#FFFF00'],
+      ['シアン', '#00FFFF'],
+      ['マゼンタ', '#FF00FF'],
+      ['浅葱色', '#00A3AF'],
+      ['撫子', '#DC9FB4'],
+      ['紅梅', '#E16B8C'],
+      ['蘇芳', '#8E354A'],
+      ['退紅', '#F8C3CD'],
+      ['一斥染', '#F4A7B9'],
+      ['桑染', '#64363C'],
+      ['桃', '#F596AA'],
+      ['苺', '#B5495B'],
+      ['薄紅', '#E87A90'],
+      ['今様', '#D05A6E'],
+      ['中紅', '#DB4D6D'],
+      ['桜', '#FEDFE1'],
+      ['梅鼠', '#9E7A7A'],
+      ['韓紅花', '#D0104C'],
+      ['燕脂', '#9F353A'],
+      ['紅', '#CB1B45'],
+      ['鴇', '#EEA9A9'],
+      ['長春', '#BF6766'],
+      ['深緋', '#86473F'],
+      ['桜鼠', '#B19693'],
+      ['甚三紅', '#EB7A77'],
+      ['小豆', '#954A45'],
+      ['蘇芳香', '#A96360'],
+      ['赤紅', '#CB4042'],
+      ['真朱', '#AB3B3A'],
+      ['灰桜', '#D7C4BB'],
+      ['栗梅', '#904840'],
+      ['海老茶', '#734338'],
+      ['銀朱', '#C73E3A'],
+      ['黒鳶', '#554236'],
+      ['紅鳶', '#994639'],
+      ['曙', '#F19483'],
+      ['紅樺', '#B54434'],
+      ['水がき', '#B9887D'],
+      ['珊瑚朱', '#F17C67'],
+      ['紅檜皮', '#884C3A'],
+      ['猩猩緋', '#E83015'],
+      ['鉛丹', '#D75455'],
+      ['芝翫茶', '#B55D4C'],
+      ['檜皮', '#854836'],
+      ['柿渋', '#A35E47'],
+      ['緋', '#CC543A'],
+      ['鳶', '#724832'],
+      ['紅緋', '#F75C2F'],
+      ['栗皮茶', '#6A4028'],
+      ['弁柄', '#9A5034'],
+      ['照柿', '#C46243'],
+      ['江戸茶', '#AF5F3C'],
+      ['洗朱', '#FB966E'],
+      ['百塩茶', '#724938'],
+      ['唐茶', '#B47157'],
+      ['ときがら茶', '#DB8E71'],
+      ['黄丹', '#F05E1C'],
+      ['纁', '#ED784A'],
+      ['遠州茶', '#CA7853'],
+      ['樺茶', '#B35C37'],
+      ['焦茶', '#563F2E'],
+      ['赤香', '#E3916E'],
+      ['雀茶', '#8F5A3C'],
+      ['宍', '#F0A986'],
+      ['宗伝唐茶', '#A0674B'],
+      ['樺', '#C1693C'],
+      ['深支子', '#FB9966'],
+      ['胡桃', '#947A6D'],
+      ['代赭', '#A36336'],
+      ['洗柿', '#E79460'],
+      ['黄櫨染', '#7D532C'],
+      ['赤朽葉', '#C78550'],
+      ['礪茶', '#985F2A'],
+      ['赤白橡', '#E1A679'],
+      ['煎茶', '#855B32'],
+      ['萱草', '#FC9F4D'],
+      ['洒落柿', '#FFBA84'],
+      ['紅鬱金', '#E98B2A'],
+      ['梅染', '#E9A368'],
+      ['枇杷茶', '#B17844'],
+      ['丁子茶', '#96632E'],
+      ['憲法染', '#43341B'],
+      ['琥珀', '#CA7A2C'],
+      ['薄柿', '#ECB88A'],
+      ['伽羅', '#78552B'],
+      ['丁子染', '#B07736'],
+      ['柴染', '#967249'],
+      ['朽葉', '#E2943B'],
+      ['金茶', '#C7802D'],
+      ['狐', '#9B6E23'],
+      ['煤竹', '#6E552F'],
+      ['薄香', '#EBB471'],
+      ['砥粉', '#D7B98E'],
+      ['銀煤竹', '#82663A'],
+      ['黄土', '#B68E55'],
+      ['白茶', '#BC9F77'],
+      ['媚茶', '#876633'],
+      ['黄唐茶', '#C18A26'],
+      ['山吹', '#FFB11B'],
+      ['山吹茶', '#D19826'],
+      ['櫨染', '#DDA52D'],
+      ['桑茶', '#C99833'],
+      ['玉子', '#F9BF45'],
+      ['白橡', '#DCB879'],
+      ['黄橡', '#BA9132'],
+      ['玉蜀黍', '#E8B647'],
+      ['花葉', '#F7C242'],
+      ['生壁', '#7D6C46'],
+      ['鳥の子', '#DAC9A6'],
+      ['浅黄', '#FAD689'],
+      ['黄朽葉', '#D9AB42'],
+      ['梔子', '#F6C555'],
+      ['籐黄', '#FFC408'],
+      ['鬱金', '#EFBB24'],
+      ['芥子', '#CAAD5F'],
+      ['肥後煤竹', '#8D742A'],
+      ['利休白茶', '#B4A582'],
+      ['灰汁', '#877F6C'],
+      ['利休茶', '#897D55'],
+      ['路考茶', '#74673E'],
+      ['菜種油', '#A28C37'],
+      ['鶯茶', '#6C6024'],
+      ['黄海松茶', '#867835'],
+      ['海松茶', '#62592C'],
+      ['刈安', '#E9CD4C'],
+      ['菜の花', '#F7D94C'],
+      ['黄蘗', '#FBE251'],
+      ['蒸栗', '#D9CD90'],
+      ['青朽葉', '#ADA142'],
+      ['女郎花', '#DDD23B'],
+      ['鶸茶', '#A5A051'],
+      ['鶸', '#BEC23F'],
+      ['鶯', '#6C6A2D'],
+      ['柳茶', '#939650'],
+      ['苔', '#838A2D'],
+      ['麹塵', '#B1B479'],
+      ['璃寛茶', '#616138'],
+      ['藍媚茶', '#4B4E2A'],
+      ['海松', '#5B622E'],
+      ['千歳茶', '#4D5139'],
+      ['梅幸茶', '#89916B'],
+      ['鶸萌黄', '#90B44B'],
+      ['柳染', '#91AD70'],
+      ['裏柳', '#B5CAA0'],
+      ['岩井茶', '#646A58'],
+      ['萌黄', '#7BA23F'],
+      ['苗', '#86C166'],
+      ['柳煤竹', '#4A593D'],
+      ['松葉', '#42602D'],
+      ['青丹', '#516E41'],
+      ['薄青', '#91B493'],
+      ['柳鼠', '#808F7C'],
+      ['常磐', '#1B813E'],
+      ['若竹', '#5DAC81'],
+      ['千歳緑', '#36563C'],
+      ['緑', '#227D51'],
+      ['白緑', '#A8D8B9'],
+      ['老竹', '#6A8372'],
+      ['木賊', '#2D6D4B'],
+      ['御納戸茶', '#465D4C'],
+      ['緑青', '#24936E'],
+      ['錆青磁', '#86A697'],
+      ['青竹', '#00896C'],
+      ['ビロード', '#096148'],
+      ['虫襖', '#20604F'],
+      ['藍海松茶', '#0F4C3A'],
+      ['沈香茶', '#4F726C'],
+      ['青緑', '#00AA90'],
+      ['青磁', '#69B0AC'],
+      ['鉄', '#26453D'],
+      ['水浅葱', '#66BAB7'],
+      ['青碧', '#268785'],
+      ['錆鉄御納戸', '#405B55'],
+      ['高麗納戸', '#305A56'],
+      ['白群', '#78C2C4'],
+      ['御召茶', '#376B6D'],
+      ['瓶覗', '#A5DEE4'],
+      ['深川鼠', '#77969A'],
+      ['錆浅葱', '#6699A1'],
+      ['水', '#81C7D4'],
+      ['浅葱色', '#33A6B8'],
+      ['御納戸', '#0C4842'],
+      ['藍', '#0D5661'],
+      ['新橋', '#0089A7'],
+      ['錆御納戸', '#336774'],
+      ['鉄御納戸', '#255359'],
+      ['花浅葱', '#1E88A8'],
+      ['藍鼠', '#566C73'],
+      ['舛花', '#577C8A'],
+      ['空', '#58B2DC'],
+      ['熨斗目花', '#2B5F75'],
+      ['千草', '#3A8FB7'],
+      ['御召御納戸', '#2E5C6E'],
+      ['縹', '#006284'],
+      ['勿忘草', '#7DB9DE'],
+      ['群青', '#51A8DD'],
+      ['露草', '#2EA9DF'],
+      ['黒橡', '#0B1013'],
+      ['紺', '#0F2540'],
+      ['褐', '#08192D'],
+      ['瑠璃', '#005CAF'],
+      ['瑠璃紺', '#0B346E'],
+      ['紅碧', '#7B90D2'],
+      ['藤鼠', '#6E75A4'],
+      ['鉄紺', '#261E47'],
+      ['紺青', '#113285'],
+      ['紅掛花', '#4E4F97'],
+      ['紺桔梗', '#211E55'],
+      ['藤', '#8B81C3'],
+      ['二藍', '#70649A'],
+      ['楝', '#9B90C2'],
+      ['藤紫', '#8A6BBE'],
+      ['桔梗', '#6A4C9C'],
+      ['紫苑', '#8F77B5'],
+      ['滅紫', '#533D5B'],
+      ['薄', '#B28FCE'],
+      ['半', '#986DB2'],
+      ['江戸紫', '#77428D'],
+      ['紫紺', '#3C2F41'],
+      ['深紫', '#4A225D'],
+      ['菫', '#66327C'],
+      ['紫', '#592C63'],
+      ['菖蒲', '#6F3381'],
+      ['藤煤竹', '#574C57'],
+      ['紅藤', '#B481BB'],
+      ['黒紅', '#3F2B36'],
+      ['茄子紺', '#572A3F'],
+      ['葡萄鼠', '#5E3D50'],
+      ['鳩羽鼠', '#72636E'],
+      ['杜若', '#622954'],
+      ['蒲葡', '#6D2E5B'],
+      ['牡丹', '#C1328E'],
+      ['梅紫', '#A8497A'],
+      ['似紫', '#562E37'],
+      ['躑躅', '#E03C8A'],
+      ['紫鳶', '#60373E'],
+      ['白練', '#FCFAF2'],
+      ['胡粉', '#FFFFFB'],
+      ['白鼠', '#BDC0BA'],
+      ['銀鼠', '#91989F'],
+      ['鉛', '#787878'],
+      ['灰', '#828282'],
+      ['素鼠', '#787D7B'],
+      ['利休鼠', '#707C74'],
+      ['鈍', '#656765'],
+      ['青鈍', '#535953'],
+      ['溝鼠', '#4F4F48'],
+      ['紅消鼠', '#52433D'],
+      ['藍墨茶', '#373C38'],
+      ['檳榔子染', '#3A3226'],
+      ['消炭', '#434343'],
+      ['墨', '#1C1C1C'],
+      ['黒', '#080808'],
+      ['呂', '#0C0C0C']
+    ];
+
+    function hexToRgb(hex) {
+      const n = Number.parseInt(hex.slice(1), 16);
+      return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+    }
+
+    function rgbToOklab(r, g, b) {
+      const linear = v => {
+        v /= 255;
+        return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+      };
+      r = linear(r); g = linear(g); b = linear(b);
+      const l = 0.4122214708*r + 0.5363325363*g + 0.0514459929*b;
+      const m = 0.2119034982*r + 0.6806995451*g + 0.1073969566*b;
+      const s = 0.0883024619*r + 0.2817188376*g + 0.6299787005*b;
+      const l3 = Math.cbrt(l), m3 = Math.cbrt(m), s3 = Math.cbrt(s);
+      return [
+        0.2104542553*l3 + 0.7936177850*m3 - 0.0040720468*s3,
+        1.9779984951*l3 - 2.4285922050*m3 + 0.4505937099*s3,
+        0.0259040371*l3 + 0.7827717662*m3 - 0.8086757660*s3
+      ];
+    }
+
+    const COLOR_NAMES = COLOR_NAME_SOURCE.map(([name, hex]) => ({
+      name,
+      hex,
+      lab: rgbToOklab(...hexToRgb(hex))
+    }));
+
+    function colorName(r, g, b) {
+      const target = rgbToOklab(r, g, b);
+      let best = COLOR_NAMES[0];
+      let bestDistance = Infinity;
+      for (const color of COLOR_NAMES) {
+        const dL = (target[0] - color.lab[0]) * 1.08;
+        const da = target[1] - color.lab[1];
+        const db = target[2] - color.lab[2];
+        const distance = dL*dL + da*da + db*db;
+        if (distance < bestDistance) {
+          bestDistance = distance;
+          best = color;
+        }
+      }
+      return best.name;
     }
 
     // ---------------- additive mixing ----------------
@@ -773,7 +1104,10 @@
       $('rgbSwatch').style.background = `rgb(${r},${g},${b})`;
       $('hexText').textContent = hex;
       $('rgbHexLarge').textContent = hex;
-      $('mixName').textContent = colorName(r,g,b);
+      $('rgbDecimalLarge').textContent = `(${r},${g},${b})`;
+      const name = colorName(r,g,b);
+      $('mixName').textContent = name;
+      $('rgbColorName').textContent = name;
 
       const brightness = (r + g + b) / (255 * 3);
       $('targetRing').style.background = `rgb(${r},${g},${b})`;
@@ -802,7 +1136,7 @@
       [255,160,40].forEach((v,i) => rgbInputs[i].value = v);
       updateRgb();
     });
-    $('copyRgbHex').addEventListener('click', () => copyCode('rgbHexLarge', 'copyRgbHex'));
+    $('copyRgbHex').addEventListener('click', () => copyColorInfo('rgbColorName', 'rgbHexLarge', 'rgbDecimalLarge', 'copyRgbHex'));
 
     // ---------------- subtractive mixing ----------------
     const cmyInputs = [$('c'), $('m'), $('y')];
@@ -837,7 +1171,10 @@
       $('paintDot').style.background = `rgb(${r},${g},${b})`;
       $('paintHex').textContent = hex;
       $('cmyHexLarge').textContent = hex;
-      $('paintName').textContent = colorName(r,g,b) + '系';
+      $('cmyDecimalLarge').textContent = `(${r},${g},${b})`;
+      const name = colorName(r,g,b);
+      $('paintName').textContent = name;
+      $('cmyColorName').textContent = name;
       if (kick) {
         mixKick = 1;
         $('mixingIndicator').classList.add('show');
@@ -858,7 +1195,7 @@
       [40,150,220].forEach((v,i) => cmyInputs[i].value = v);
       updateCmy(true);
     });
-    $('copyCmyHex').addEventListener('click', () => copyCode('cmyHexLarge', 'copyCmyHex'));
+    $('copyCmyHex').addEventListener('click', () => copyColorInfo('cmyColorName', 'cmyHexLarge', 'cmyDecimalLarge', 'copyCmyHex'));
 
     function resizeCanvas() {
       const rect = canvas.getBoundingClientRect();
